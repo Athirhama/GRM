@@ -5,8 +5,8 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import CosineAnnealingLR 
-from model import DGCNN_PartSeg
-from data import ShapeNetPart
+from model2 import DGCNN_PartSeg
+from data2 import ShapeNetPart
 from utils import calculate_shape_iou
 from tqdm import tqdm 
 
