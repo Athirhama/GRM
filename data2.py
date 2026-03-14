@@ -66,7 +66,11 @@ class ShapeNetPart(Dataset):
         
         # Subsampling
         # On choisit aléatoirement 'num_points' parmi les points disponibles ? unifrmement aussi à verifier (j'ai passé le replace en False)
-        choice = np.random.choice(len(seg), self.num_points, replace=False)
+        if len(seg) >= self.num_points:
+            choice = np.random.choice(len(seg), self.num_points, replace=False)
+        else:
+             # Fallback au cas où un très petit objet aurait moins de points que self.num_points
+             choice = np.random.choice(len(seg), self.num_points, replace=True)
              
         pc = pc[choice, :]
         seg = seg[choice]
