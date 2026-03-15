@@ -36,7 +36,7 @@ def run_model(model, loader, criterion, device, optimizer=None):
         with torch.set_grad_enabled(is_train):
             logits = model(data, l_one_hot)
             # 50 correspond au nombre total de parties (labels) possibles dans ShapeNetPart
-            loss = criterion(logits.view(-1, 50), seg.view(-1))
+            loss = criterion(logits, seg)
             
             if is_train:
                 loss.backward()
