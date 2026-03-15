@@ -10,6 +10,7 @@ from data2 import ShapeNetPart
 from utils import calculate_shape_iou
 from utils2 import calculate_shape_IoU
 from tqdm import tqdm 
+import numpy as np
 
 def run_model(model, loader, criterion, device, optimizer=None):
     """
