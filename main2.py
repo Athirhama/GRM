@@ -8,6 +8,7 @@ from torch.optim.lr_scheduler import CosineAnnealingLR
 from model2 import DGCNN_PartSeg
 from data2 import ShapeNetPart
 from utils import calculate_shape_iou
+from utils2 import calculate_shape_IoU
 from tqdm import tqdm 
 
 def run_model(model, loader, criterion, device, optimizer=None):
@@ -17,7 +18,8 @@ def run_model(model, loader, criterion, device, optimizer=None):
     """
     is_train = optimizer is not None
     model.train() if is_train else model.eval()
-    total_loss, total_iou = 0.0, 0.0
+    total_loss = 0.0
+    all_shape_ious = []
     
     mode = "Train" if is_train else "Test "
     pbar = tqdm(enumerate(loader), total=len(loader), desc=mode, unit="batch", leave=False)
@@ -46,10 +48,11 @@ def run_model(model, loader, criterion, device, optimizer=None):
         preds = logits.max(dim=1)[1]
         
         # Assure-toi que ta fonction calculate_shape_iou gère bien les batchs
-        total_iou += calculate_shape_iou(preds, seg)
+        batch_ious = calculate_shape_IoU(preds, seg, label)
+        all_shape_ious.extend(batch_ious)
         pbar.set_postfix({'loss': f'{loss.item():.4f}'})
 
-    return total_loss / len(loader), total_iou / len(loader)
+    return total_loss / len(loader), np.mean(all_shape_ious)
 
 
 if __name__ == "__main__":
