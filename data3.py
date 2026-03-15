@@ -4,9 +4,9 @@ import torch
 from torch.utils.data import Dataset
 
 def translate_pointcloud(pointcloud):
-    # scaling aléatoire
+    # random scaling 
     xyz1 = np.random.uniform(low=2./3., high=3./2., size=[3]) 
-    # translation aléatoire
+    # random translation 
     xyz2 = np.random.uniform(low=-0.2, high=0.2, size=[3])
     
     translated_pointcloud = np.add(np.multiply(pointcloud, xyz1), xyz2).astype('float32')
@@ -37,7 +37,7 @@ class ShapeNetPart(Dataset):
                             'category_id': i 
                         })
 
-        # Split Train/Test (80% / 20%) fixe pour éviter le leakage
+        # Split Train/Test (80% / 20%) 
         np.random.seed(42)
         indices = np.arange(len(self.datapath))
         np.random.shuffle(indices)
@@ -52,30 +52,29 @@ class ShapeNetPart(Dataset):
 
     def get_seg_mapping(self):
         """
-        Analyse le dataset pour découvrir quels IDs de segments appartiennent à quelle catégorie.
-        Indispensable pour le calcul rigoureux du mIoU.
+        to get IDs for categs
         """
         mapping = [set() for _ in range(len(self.categories))]
-        print("Génération automatique du mapping segments -> catégories...")
         
-        # On parcourt tout le dataset (très rapide avec les fichiers .npy)
+        
+
         for fn in self.datapath:
             cat_id = fn['category_id']
             seg = np.load(fn['label'])
             mapping[cat_id].update(np.unique(seg))
             
-        # Conversion en listes triées d'entiers
+
         return [sorted(list(s)) for s in mapping]
 
     def __getitem__(self, index):
         fn = self.datapath[self.active_indices[index]]
         
-        # Chargement
+    
         pc = np.load(fn['point']).astype(np.float32)
         seg = np.load(fn['label']).astype(np.int64)
         cat_id = fn['category_id'] 
         
-        # Subsampling (Échantillonnage)
+        # Subsampling 
         if len(seg) >= self.num_points:
             choice = np.random.choice(len(seg), self.num_points, replace=False)
         else:
@@ -84,13 +83,13 @@ class ShapeNetPart(Dataset):
         pc = pc[choice, :]
         seg = seg[choice]
         
-        # Normalisation (Spatiale)
+        # Normalisation 
         pc = pc - np.mean(pc, axis=0)
         dist = np.max(np.sqrt(np.sum(pc ** 2, axis=1)))
         if dist > 0:
             pc = pc / dist
             
-        # Augmentation (uniquement pour l'entraînement)
+        # Augmentation (only for training)
         if self.partition == 'train':
              pc = translate_pointcloud(pc)
 
