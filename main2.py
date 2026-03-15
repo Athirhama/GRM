@@ -85,7 +85,7 @@ if __name__ == "__main__":
             
             test_loader = DataLoader(
                 ShapeNetPart(args.num_points, 'test'), 
-                batch_size=args.batch_size, shuffle=False, num_workers=4
+                batch_size=args.batch_size, shuffle=False, num_workers=2
             )
             
             test_loss, test_iou = run_model(model, test_loader, criterion, device)
