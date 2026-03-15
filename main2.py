@@ -104,14 +104,14 @@ if __name__ == "__main__":
         train_loader = DataLoader(
             ShapeNetPart(args.num_points, 'train'), 
             batch_size=args.batch_size, 
-            shuffle=True, num_workers=4, pin_memory=True, persistent_workers=True
+            shuffle=True, num_workers=2, pin_memory=True, persistent_workers=True
         )
         
         # NOUVEAU : On prépare le test_loader pour évaluer à la volée
         test_loader = DataLoader(
             ShapeNetPart(args.num_points, 'test'), 
             batch_size=args.batch_size, 
-            shuffle=False, num_workers=4, pin_memory=True
+            shuffle=False, num_workers=2, pin_memory=True
         )
 
         best_iou = 0.0
